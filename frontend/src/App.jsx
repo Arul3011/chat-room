@@ -19,7 +19,11 @@ function App() {
   setRoomName(rname)
   },[])
   useEffect(()=>{
-    socket.emit("joinroom",{roomName:roomName,name:name});
+    if(roomName === null){
+      alert("joint to a room")
+    }else{
+      socket.emit("joinroom",{roomName:roomName,name:name});
+    }
   },[roomName])
 
   useEffect(() => {
@@ -29,13 +33,7 @@ function App() {
         socket.disconnect(); // Cleanup on unmount
     };
 }, []);
-  // useEffect(() => {
-  //   if (dialogEl_name.current) {
-  //     dialogEl_name.current.showModal();
-  //   }
-  // }, []); 
-  
-  // Show the dialog when the component mounts
+
 const hanngelnameDilog_name = () =>{
   dialogEl_name.current.close()
   dialogEl_room.current.showModal()
