@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .mes-feild{
+            border: solid black 1px;
+            width: 60%;
+            height: 300px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+        }
+        .mes-feild p{
+    width: 90%;
+    background-color: aquamarine;
+    padding: 10px 20px;
+    margin: 5px auto;
+    border-radius: 7px;
+        }
+        #text{
+            width: 50%;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        #btn{
+            padding: 8px 20px ;
+        }
+        #room-list{
+            display:flex;   
+        }
+    </style>
+</head>
+<body>
+    <h2>hello roooms</h2>
+    <div id="room-list">
+
+
+    </div>
+    <div class="mes-feild" id="feild">
+    <!-- <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p>
+    <p>5</p> -->
+    
+    </div>
+    <input type="text" id="text">
+    <button id="btn">send</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+         var socket = io();
+    const textEl = document.getElementById('text');
+    const btnEl = document.getElementById('btn');
+    const feildEl = document.getElementById('feild');
+    const roomEl = document.getElementById('room-list');
+
+    const name = prompt("name");  // Use a fixed name, or prompt the user
+    const roomName = prompt("roomName");  // Use the same room name consistently
+
+    // Join the room when the client connects
+    if (roomName) {
+        socket.emit("joinroom", { roomName: roomName, name: name });
+
+        socket.on("roomsList",(data)=>{
+            roomEl.innerHTML = '';
+        data.map(val => {
+            const p = document.createElement('p');
+            p.textContent = val;
+            roomEl.appendChild(p);
+        })
+        
+    })
+    }
+
+    // socket.on("roomsList", (rooms) => {
+    //     console.log("Received rooms list:", rooms); })
+    // Handle the button click to send a message
+    btnEl.addEventListener('click', () => {
+        const message = textEl.value;  // Get the text input value
+        if (message) {
+            // Emit the message event to the server with room, name, and message
+            socket.emit("message", { roomName, name, message });
+            textEl.value = "";  // Clear the input field after sending the message
+        }
+    });
+
+    // Listen for new messages from the server
+    socket.on("newMessage", (data) => {
+        console.log("Received new message:", data);
+        // You can also display the message in the UI, for example:
+      
+        // console.log();
+        
+      const messagep = document.createElement("p");
+       messagep.textContent = data.message;
+       feildEl.appendChild(messagep)
+    });
+   
+    </script>
+</body>
+</html>
