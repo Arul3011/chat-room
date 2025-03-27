@@ -13,7 +13,7 @@ function App() {
   
   useEffect(()=>{
     const pname = prompt("enter your name") || null
-    const rname = prompt("enter your name") || null
+    const rname = prompt("enter your room name or room ID") || null
 
     setName(pname)
   setRoomName(rname)
