@@ -1,4 +1,5 @@
-export default function RoomList({ roomList, setIsOpen }) {
+export default function RoomList({ roomList, setIsOpen,handelleavroom }) {
+  
   return (
     <div className="h-full flex flex-col">
       <h2 className="text-xl font-bold mb-4">Available Rooms</h2>
@@ -37,6 +38,7 @@ export default function RoomList({ roomList, setIsOpen }) {
           ))
         )}
       </ul>
+      <button className="py-3 bg-red-400" onClick={handelleavroom}>Leave room</button>
     </div>
   );
 }

@@ -6,29 +6,22 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Transition } from '@headlessui/react';
 import Hamburger from 'hamburger-react';
 import './App.css'; // Optional: your custom styles
+import JoinRoomDialog from './blocks/InputForm';
 
 function App() {
   const [name, setName] = useState('');
   const [roomName, setRoomName] = useState('');
   const [roomList, setRoomList] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const pname = prompt('Enter your name') || '';
-    const rname = prompt('Enter your room name or room ID') || '';
-
-    if (!pname || !rname) {
-      toast.error('Name and Room are required!');
-      return;
-    }
-
-    setName(pname);
-    setRoomName(rname);
-  }, []);
-
+  const [dilogOpen, setDialogOpen] = useState(true);
+  const [isinroom,setIsinroom] = useState(false);
+const handelleavroom = ()=>{
+    socket.emit("leave-room", { roomName });
+  }
   useEffect(() => {
     if (roomName && name) {
       socket.emit('joinroom', { roomName, name });
+      
     }
   }, [roomName, name]);
 
@@ -67,7 +60,7 @@ function App() {
               className="fixed top-0 left-0 w-64 h-full  bg-gray-800 text-white p-4 z-40 md:hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <RoomList setIsOpen={setIsOpen} isOpen={isOpen} roomList={roomList} />
+              <RoomList handelleavroom={handelleavroom} setIsOpen={setIsOpen} isOpen={isOpen} roomList={roomList} />
             </div>
           </Transition>
 
@@ -82,7 +75,11 @@ function App() {
           </div>
         </div>
       </div>
-
+      <JoinRoomDialog isOpen={dilogOpen} roominput={(name,roomId)=>{
+        setName(name);
+        setRoomName(roomId);
+      }}
+      setDialogOpen={setDialogOpen} />
       <Toaster />
     </>
   );
