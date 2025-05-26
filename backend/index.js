@@ -14,27 +14,62 @@ const io = socketIo(server, {
 
 app.use(express.static("public"));
 
-const rooms = [];
-
+const rooms = new Set();
+const roomdetails = {};
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
-
+  socket.emit("roomsList", Array.from(rooms));
+//create room
+socket.on("createroom",(data,callback)=>{
+  const {roomname,roompassword} = data;
+  if(!rooms.has(roomname)){
+    rooms.add(roomname);
+   roomdetails[roomname] = {
+  password: roompassword,
+};
+    console.log(roomdetails);
+    
+    callback({status:'ok'})
+  }else{
+    callback({status:"error",message:"room have exist"})
+  }
+})
   // JOIN ROOM
-  socket.on("joinroom", ({ roomName, name }) => {
-    if (!rooms.includes(roomName)) {
-      rooms.push(roomName);
+ socket.on("joinroom", (data, callback) => {
+    const { roomName, name ,roompass} = data;
+    // console.log(data);
+    console.log(rooms.has(roomName));
+    
+    
+    
+    if (!roomName || !name || !roompass) {
+        return callback({ status: 'error', message: 'Missing name or room name' });
     }
 
+    // Check if the room exists
+    if (!rooms.has(roomName)) {
+        return callback({ status: 'error', message: 'Room does not exist' });
+    }
+   if (roomdetails[roomName]?.password === roompass) {
     socket.join(roomName);
+    socket.emit("roomsList", Array.from(rooms));
     console.log(`${name} joined room: ${roomName}`);
 
-    socket.to(roomName).emit("newJoin", {
-      message: `${name} has joined the room!`,
-    });
+    }
 
-    // Send updated rooms list to all clients
-    io.emit("roomsList", rooms);
-  });
+    // Join the room
+   
+    // rooms.add(roomName);
+   
+    // Acknowledge the client with a success message
+    callback({ status: 'ok' });
+
+    // Notify others in the room
+    socket.to(roomName).emit("newJoin", {
+        message: `${name} has joined the room!`,
+    });
+});
+
 
   // LEAVE ROOM
   socket.on("leave-room", ({ roomId }) => {
@@ -50,7 +85,6 @@ io.on("connection", (socket) => {
   });
 
   // Send current rooms list on connection
-  socket.emit("roomsList", rooms);
 
   // HANDLE DISCONNECT
   socket.on("disconnect", () => {

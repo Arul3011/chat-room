@@ -1,23 +1,26 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 
-export default function JoinRoomDialog({isOpen,roominput,setDialogOpen}) {
-  const [name, setName] = useState("");
-  const [roomId, setRoomId] = useState("");
-  const [roompass, setRoompass] = useState("")
-
+export default function CreatRoom({creatform,createroominput,setCreatfrom}) {
+  const [rname, setRname] = useState("");
+  const [rpass, setRpass] = useState("");
+  const [loading,setLoading] = useState(false)
+  const [conformRoomPassword,setConformRoomPassword] = useState("")
 
   const handleJoin = () => {
-
-    if (name && roomId && roompass) {
-      roominput(name, roomId,roompass );
-      setDialogOpen(false);
+    if (rname && rpass && conformRoomPassword) {
+        if(rpass === conformRoomPassword){
+            createroominput(rname, rpass );
+            setLoading(true);
+        }
+      
     }
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={()=> setDialogOpen(false)}>
+    <Transition appear show={creatform} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={()=> setCreatfrom(false)}
+      >
         {/* Blurred Light Background */}
         <Transition.Child
           as={Fragment}
@@ -44,35 +47,35 @@ export default function JoinRoomDialog({isOpen,roominput,setDialogOpen}) {
           >
             <Dialog.Panel className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
               <Dialog.Title className="text-lg font-semibold text-gray-900">
-                Join Private Room
+              Create Your Private Room
               </Dialog.Title>
               <div className="mt-4">
                 <input
                   type="text"
-                  placeholder="Your Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  placeholder="room Name"
+                  value={rname}
+                  onChange={(e) => setRname(e.target.value)}
                   className="w-full mb-3 px-4 py-2 border border-gray-500 shadow-sm rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <input
-                  type="text"
-                  placeholder="Room ID"
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
+                  type="password"
+                  placeholder="Room password"
+                  value={rpass}
+                  onChange={(e) => setRpass(e.target.value)}
                   className="w-full mb-4 px-4 py-2 border border-gray-500 shadow-sm rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                  <input
-                  type="text"
-                  placeholder="Room password"
-                  value={roompass}
-                  onChange={(e) => setRoompass(e.target.value)}
+                  type="password"
+                  placeholder="conform Room password"
+                  value={conformRoomPassword}
+                  onChange={(e) => setConformRoomPassword(e.target.value)}
                   className="w-full mb-4 px-4 py-2 border border-gray-500 shadow-sm rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
                   onClick={handleJoin}
                   className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
                 >
-                  Join
+                 {!loading ?  "Create" : "loading..."}
                 </button>
               </div>
             </Dialog.Panel>

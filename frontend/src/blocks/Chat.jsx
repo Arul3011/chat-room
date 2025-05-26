@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { socket } from '../lib/scoket';
 import toast from "react-hot-toast";
 
-export default function Chat({ name, roomName }) {
+export default function Chat({ name, roomName,isinroom }) {
     const [messages, setMessages] = useState([]);
     const [value, setValue] = useState("");
+console.log(isinroom);
 
     const sendMessage = () => {
+        if(!isinroom){
+            toast.error("go to chat")
+            return
+        }
         if (value.trim() === "") return;
 
         const msgData = {
