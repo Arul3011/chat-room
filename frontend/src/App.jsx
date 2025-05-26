@@ -9,6 +9,8 @@ import './App.css'; // Optional: your custom styles
 import JoinRoomDialog from './blocks/InputForm';
 import CreatRoom from './blocks/CreatroomForm';
 
+import Navbar from './blocks/Nav';
+
 function App() {
   const [name, setName] = useState('');
   const [roomName, setRoomName] = useState('');
@@ -18,7 +20,9 @@ function App() {
   const [isinroom,setIsinroom] = useState(false);
  const [creatform, setCreatfrom] = useState(false);
  const [roompass,setRoompass] = useState("");
-
+// const handeljoindBYlist =()=>{
+//   name
+// }
 const handelleavroom = ()=>{
     socket.emit("leave-room", { roomName });
   }
@@ -71,11 +75,8 @@ const handelleavroom = ()=>{
   return (
     <>
       <div className="w-full h-[100dvh] flex flex-col bg-gray-100 relative">
-        {/* Hamburger Button (Mobile) */}
-        <div className="fixed top-4 left-4 z-50 md:hidden">
-          <Hamburger toggled={isOpen} toggle={setIsOpen} size={20} color="blue" />
-        </div>
-
+        <Navbar isOpen={isOpen} setIsOpen={setIsOpen}/>
+      
         <div className="flex flex-1 overflow-hidden">
           <Transition
             show={isOpen}
@@ -90,29 +91,39 @@ const handelleavroom = ()=>{
               className="fixed top-0 left-0 w-64 h-full  bg-gray-800 text-white p-4 z-40 md:hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <RoomList handelleavroom={handelleavroom} setIsOpen={setIsOpen} isOpen={isOpen} roomList={roomList} />
+              <RoomList 
+              handelleavroom={handelleavroom} 
+              setIsOpen={setIsOpen} 
+              isOpen={isOpen} 
+              roomList={roomList} 
+              setCreatfrom={setCreatfrom}
+              setDialogOpen={setDialogOpen}
+              setIsinroom={setIsinroom}
+              isinroom={isinroom}
+              />
             </div>
           </Transition>
 
-          {/* Sidebar - Desktop only */}
+        
           <div className="hidden md:block md:w-1/3 bg-gray-800 text-white p-4">
-            <RoomList setIsOpen={setIsOpen}
+            <RoomList 
+             setIsOpen={setIsOpen}
              isOpen={isOpen} 
              roomList={roomList} 
              setDialogOpen={setDialogOpen}
              isinroom={isinroom}
              setIsinroom={setIsinroom}
              setCreatfrom={setCreatfrom}
+              handelleavroom={handelleavroom} 
              />
              
           </div>
 
-          {/* Chat Area */}
           <div className="w-full md:w-2/3">
             
           {isinroom ?
           <Chat name={name} roomName={roomName}  isinroom={isinroom}/> :
-          <h1 className='text-center my-auto'>{"Go to chat"}</h1>}
+          <button className='text-center text-white px-2 py-2 rounded cursor-pointer m-[40%] bg-gray-800' onClick={()=> setIsOpen(pre => !pre)}>{"Go to chat"}</button>}
           </div>
         </div>
       </div>
